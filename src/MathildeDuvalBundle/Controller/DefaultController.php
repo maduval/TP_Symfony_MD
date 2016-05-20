@@ -12,6 +12,7 @@ class DefaultController extends Controller
      */
     public function indexAction()
     {
-        return $this->render('MathildeDuvalBundle:Default:index.html.twig');
+        //return $this->render('MathildeDuvalBundle:Default:index.html.twig');
+        return $this->redirectToRoute('md_job_index');
     }
 }

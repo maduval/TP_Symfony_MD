@@ -3,6 +3,7 @@
 namespace MathildeDuvalBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use MathildeDuvalBundle\Utils\Jobeet as Jobeet;
 
 
 /**
@@ -513,5 +514,21 @@ class Job
     public function getUpdatedAt()
     {
         return $this->updatedAt;
+    }
+
+
+    public function getCompanySlug()
+    {
+        return Jobeet::slugify($this->getCompany());
+    }
+
+    public function getPositionSlug()
+    {
+        return Jobeet::slugify($this->getPosition());
+    }
+
+    public function getLocationSlug()
+    {
+        return Jobeet::slugify($this->getLocation());
     }
 }
