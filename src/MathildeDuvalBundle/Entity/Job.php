@@ -26,7 +26,6 @@ class Job
     /**
      * @var Category
      *
-     * @ORM\Column(name="category_id", type="integer")
      * @ORM\ManyToOne(targetEntity="Category", inversedBy="jobs")
      * @ORM\JoinColumn(name="category_id", referencedColumnName="id")
      *
