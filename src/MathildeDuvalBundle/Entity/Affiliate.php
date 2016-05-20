@@ -9,6 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
  *
  * @ORM\Table(name="affiliate")
  * @ORM\Entity(repositoryClass="MathildeDuvalBundle\Repository\AffiliateRepository")
+ * @ORM\HasLifecycleCallbacks()
  */
 class Affiliate
 {
@@ -47,7 +48,6 @@ class Affiliate
      * @var \DateTime
      *
      * @ORM\Column(name="created_at", type="datetime")
-     * @Gedmo\Timestampable(on="create")
      */
     private $createdAt;
 
@@ -141,11 +141,12 @@ class Affiliate
      * Set createdAt
      *
      * @param \DateTime $createdAt
+     * @ORM\PrePersist
      * @return Affiliate
      */
     public function setCreatedAt($createdAt)
     {
-        $this->createdAt = $createdAt;
+        $this->createdAt = new \DateTime();
 
         return $this;
     }

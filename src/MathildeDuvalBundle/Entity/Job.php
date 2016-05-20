@@ -4,11 +4,13 @@ namespace MathildeDuvalBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
+
 /**
  * Job
  *
  * @ORM\Table(name="job")
  * @ORM\Entity(repositoryClass="MathildeDuvalBundle\Repository\JobRepository")
+ * @ORM\HasLifecycleCallbacks()
  */
 class Job
 {
@@ -126,7 +128,6 @@ class Job
      * @var \DateTime
      *
      * @ORM\Column(name="created_at", type="datetime")
-     * @Gedmo\Timestampable(on="create")
      */
     private $createdAt;
 
@@ -134,7 +135,6 @@ class Job
      * @var \DateTime
      *
      * @ORM\Column(name="updated_at", type="datetime")
-     * @Gedmo\Timestampable(on="update")
      */
     private $updatedAt;
 
@@ -472,11 +472,12 @@ class Job
      * Set createdAt
      *
      * @param \DateTime $createdAt
+     * @ORM\PrePersist
      * @return Job
      */
     public function setCreatedAt($createdAt)
     {
-        $this->createdAt = $createdAt;
+        $this->createdAt = new \DateTime();
 
         return $this;
     }
@@ -495,11 +496,12 @@ class Job
      * Set updatedAt
      *
      * @param \DateTime $updatedAt
+     * @ORM\PrePersist
      * @return Job
      */
     public function setUpdatedAt($updatedAt)
     {
-        $this->updatedAt = $updatedAt;
+        $this->updatedAt = new \DateTime();
 
         return $this;
     }
