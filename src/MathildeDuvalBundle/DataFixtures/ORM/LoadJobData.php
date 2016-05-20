@@ -40,7 +40,7 @@ class LoadJobData extends AbstractFixture implements OrderedFixtureInterface
         $job_extreme_sensio->setIsActivated(true);
         $job_extreme_sensio->setToken('job_extreme_sensio');
         $job_extreme_sensio->setEmail('job@example.com');
-        $job_extreme_sensio->setExpiresAt(new \DateTime('2012-10-10'));
+        $job_extreme_sensio->setExpiresAt(new \DateTime('2016-06-30'));
 
         $em->persist($job_sensio_labs);
         $em->persist($job_extreme_sensio);
