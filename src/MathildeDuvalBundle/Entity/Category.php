@@ -28,6 +28,20 @@ class Category
      */
     private $name;
 
+    /**
+     * @var int
+     *
+     * @ORM\OneToMany(targetEntity="Job", mappedBy="category")
+     */
+    private $jobs;
+
+    /**
+     * @var int
+     *
+     * @ORM\OneToMany(targetEntity="CategoryAffiliate", mappedBy="category")
+     */
+    private $category_affiliates;
+
 
     /**
      * Get id
@@ -61,4 +75,46 @@ class Category
     {
         return $this->name;
     }
+
+    /**
+     * Set Jobs
+     *
+     * @param int $jobs
+     * @return Category
+     */
+    public function setJobs ($jobs) {
+        $this->jobs = $jobs;
+    }
+
+    /**
+     * Get Jobs
+     *
+     * @return int
+     */
+    public function getJobs ()
+    {
+        return $this->jobs;
+    }
+
+    /**
+     * Set categoryAffiliates
+     *
+     * @param int $category_affiliates
+     * @return Category
+     */
+    public
+    function setCategoryAffiliates ($category_affiliates) {
+        $this->category_affiliates = $category_affiliates;
+    }
+
+    /**
+     * Get categoryAffiliates
+     *
+     * @return int
+     */
+    public function getCategoryAffiliates ()
+    {
+        return $this->category_affiliates;
+    }
+
 }
