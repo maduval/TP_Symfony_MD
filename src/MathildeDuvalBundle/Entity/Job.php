@@ -453,13 +453,13 @@ class Job
      */
     public function setExpiresAt($expiresAt)
     {
-        if(!$this->getExpiresAt())
+        if(is_null($expiresAt))
         {
             $now = $this->getCreatedAt() ? $this->getCreatedAt()->format('U') : time();
             $this->expiresAt = new \DateTime(date('Y-m-d H:i:s', $now + 86400 * 30));
+        }else{
+            $this->expiresAt = $expiresAt;
         }
-
-        //$this->expiresAt = $expiresAt;
 
         return $this;
     }
