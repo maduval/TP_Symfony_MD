@@ -24,17 +24,17 @@ class JobController extends Controller
      */
     public function indexAction()
     {
-        $em = $this->getDoctrine()->getManager();
+        $em = $this->getDoctrine()->getEntityManager();
 
-        $query = $em->createQuery(
-            'SELECT j FROM MathildeDuvalBundle:Job j
-                WHERE j.expiresAt > :date')
-            ->setParameter('date', date('Y-m-d H:i:s', time()));
+        $categories = $em->getRepository('MathildeDuvalBundle:Category')->getWithJobs();
 
-        $jobs = $query->getResult();
+        foreach($categories as $category)
+        {
+            $category->setActiveJobs($em->getRepository('MathildeDuvalBundle:Job')->getActiveJobs($category->getId(), $this->container->getParameter('max_jobs_on_homepage')));
+        }
 
         return $this->render('job/index.html.twig', array(
-            'jobs' => $jobs,
+            'categories' => $categories
         ));
     }
 

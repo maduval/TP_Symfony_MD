@@ -42,6 +42,7 @@ class Category
      */
     private $category_affiliates;
 
+    private $activeJobs;
 
     /**
      * Get id
@@ -115,6 +116,16 @@ class Category
     public function getCategoryAffiliates ()
     {
         return $this->category_affiliates;
+    }
+
+    public function setActiveJobs($jobs)
+    {
+        $this->activeJobs = $jobs;
+    }
+
+    public function getActiveJobs()
+    {
+        return $this->activeJobs;
     }
 
     /**
