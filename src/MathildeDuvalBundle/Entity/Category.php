@@ -3,6 +3,8 @@
 namespace MathildeDuvalBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use MathildeDuvalBundle\Utils\Jobeet as Jobeet;
+
 
 /**
  * Category
@@ -44,6 +46,7 @@ class Category
 
     private $activeJobs;
 
+    private $moreJobs;
 
     /**
      * Get id
@@ -127,6 +130,21 @@ class Category
     public function getActiveJobs()
     {
         return $this->activeJobs;
+    }
+
+    public function setMoreJobs($jobs)
+    {
+        $this->moreJobs = $jobs >=  0 ? $jobs : 0;
+    }
+
+    public function getMoreJobs()
+    {
+        return $this->moreJobs;
+    }
+
+    public function getSlug()
+    {
+        return Jobeet::slugify($this->getName());
     }
 
     public function __toString ()
