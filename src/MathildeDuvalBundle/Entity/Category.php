@@ -44,6 +44,7 @@ class Category
 
     private $activeJobs;
 
+
     /**
      * Get id
      *
@@ -128,11 +129,6 @@ class Category
         return $this->activeJobs;
     }
 
-    /**
-     * To String
-     *
-     * @return string
-     */
     public function __toString ()
     {
         return $this->getName();
