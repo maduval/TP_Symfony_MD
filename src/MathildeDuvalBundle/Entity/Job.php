@@ -28,7 +28,7 @@ class Job
      * @var Category
      *
      * @ORM\ManyToOne(targetEntity="Category", inversedBy="jobs")
-     * @ORM\JoinColumn(name="category_id", referencedColumnName="id")
+     * @ORM\JoinColumn(name="category", referencedColumnName="id")
      *
      */
     private $category;

@@ -42,9 +42,7 @@ class Category
      */
     private $category_affiliates;
 
-    /**
-     * @var
-     */
+
     private $activeJobs;
 
 
@@ -124,25 +122,20 @@ class Category
 
     /**
      * @param $jobs
+     * @return Category
      */
     public function setActiveJobs($jobs)
     {
         $this->active_jobs = $jobs;
     }
 
-    /**
-     * @return mixed
-     */
+
     public function getActiveJobs()
     {
         return $this->activeJobs;
     }
 
-    /**
-     * To String
-     *
-     * @return string
-     */
+
     public function __toString ()
     {
         return $this->getName();
