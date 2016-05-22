@@ -14,21 +14,24 @@ use MathildeDuvalBundle\Entity\Category;
 class CategoryController extends Controller
 {
     /**
-     * Finds and displays a Job entity.
      *
      * @Route("/{slug}", name="md_category_show")
      * @Method("GET")
      */
-    public function showAction(Job $job)
+    public function showAction($slug)
     {
-        $deleteForm = $this->createDeleteForm($job);
+        $em = $this->getDoctrine()->getEntityManager();
 
-        $em = $this->getDoctrine()->getManager();
-        $jobChecked = $em->getRepository('EnsJobeetBundle:Job')->getActiveJob($job->getId());
+        $category = $em->getRepository('MathildeDuvalBundle:Category')->findOneBySlug($slug);
 
-        return $this->render('job/show.html.twig', array(
-            'job' => $jobChecked,
-            'delete_form' => $deleteForm->createView(),
+        if (!$category) {
+            throw $this->createNotFoundException('Unable to find Category entity.');
+        }
+
+        $category->setActiveJobs($em->getRepository('MathildeDuvalBundle:Job')->getActiveJobs($category->getId()));
+
+        return $this->render('category/show.html.twig', array(
+            'category' => $category,
         ));
     }
 

@@ -11,6 +11,7 @@ use MathildeDuvalBundle\Utils\Jobeet as Jobeet;
  *
  * @ORM\Table(name="category")
  * @ORM\Entity(repositoryClass="MathildeDuvalBundle\Repository\CategoryRepository")
+ * @ORM\HasLifecycleCallbacks()
  */
 class Category
 {
@@ -29,6 +30,13 @@ class Category
      * @ORM\Column(name="name", type="string", length=255, unique=true)
      */
     private $name;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="slug", type="string", length=255, unique=true)
+     */
+    private $slug;
 
     /**
      * @var int
@@ -142,10 +150,31 @@ class Category
         return $this->moreJobs;
     }
 
+    /**
+     * @return string
+     */
     public function getSlug()
     {
-        return Jobeet::slugify($this->getName());
+        return $this->slug;
     }
+
+    /**
+     * @param string $slug
+     *
+     */
+    public function setSlug ($slug) {
+        $this->slug = $slug;
+    }
+
+    /**
+     * @param $slug
+     * @ORM\prePersist
+     *
+     */
+    public function setSlugValue ($slug) {
+        $this->slug = Jobeet::slugify($this->getName());
+    }
+
 
     public function __toString ()
     {
