@@ -45,7 +45,7 @@ class JobRepository extends EntityRepository
         $query = $this->createQueryBuilder('j')
                       ->where('j.id = :id')
                       ->setParameter('id', $id)
-                      ->andWhere('j.expires_at > :date')
+                      ->andWhere('j.expiresAt > :date')
                       ->setParameter('date', date('Y-m-d H:i:s', time()))
                       ->setMaxResults(1)
                       ->getQuery();
