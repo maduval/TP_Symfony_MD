@@ -52,4 +52,13 @@ class JobControllerTest extends WebTestCase
     }
 
     */
+
+    public function testIndex()
+    {
+        $client = static::createClient();
+
+        $crawler = $client->request('GET', '/md_job/');
+        $this->assertEquals('MathildeDuvalBundle\Controller\JobController::indexAction', $client->getRequest()->attributes->get('_controller'));
+        $this->assertTrue($crawler->filter('.jobs td.position:contains("Expired")')->count() == 0);
+    }
 }
