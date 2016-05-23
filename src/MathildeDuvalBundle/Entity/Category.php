@@ -169,7 +169,7 @@ class Category
     /**
      * @param $slug
      * @ORM\prePersist
-     *
+     * @ORM\preUpdate
      */
     public function setSlugValue ($slug) {
         $this->slug = Jobeet::slugify($this->getName());
