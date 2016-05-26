@@ -136,7 +136,7 @@ class JobController extends Controller
         }
 
         return $this->render('job/edit.html.twig', array(
-            'job' => $job,
+            'entity' => $job,
             'edit_form' => $editForm->createView(),
             'delete_form' => $deleteForm->createView(),
         ));

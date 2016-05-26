@@ -138,22 +138,28 @@ class Affiliate
     }
 
     /**
+     * @param \DateTime $createdAt
+     */
+    public
+    function setCreatedAt ($createdAt) {
+        $this->createdAt = $createdAt;
+    }
+
+    /**
      * Set createdAt
      *
-     * @param \DateTime $createdAt
      * @ORM\PrePersist
      * @return Affiliate
      */
-    public function setCreatedAt($createdAt)
+    public function setCreatedAtValue()
     {
         $this->createdAt = new \DateTime();
-
         return $this;
     }
 
     /**
      * Get createdAt
-     *
+     *s
      * @return \DateTime 
      */
     public function getCreatedAt()
