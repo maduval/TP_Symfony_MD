@@ -148,6 +148,11 @@ class Job
      */
     private $updatedAt;
 
+    /**
+     * @Assert\Image();
+     */
+    public $file;
+
 
     /**
      * Get id
@@ -465,7 +470,7 @@ class Job
     {
         if(is_null($expiresAt))
         {
-            $now = $this->getCreatedAt() ? $this->getCreatedAt()->format('U') : time();
+            $now = $this->getCreatedAt()?$this->getCreatedAt()->format('U') : time();
             $this->expiresAt = new \DateTime(date('Y-m-d H:i:s', $now + 86400 * 30));
         }else{
             $this->expiresAt = $expiresAt;
@@ -559,6 +564,64 @@ class Job
     public static function getTypeValues()
     {
         return array_keys(self::getTypes());
+    }
+
+    protected function getUploadDir()
+    {
+        return 'uploads/jobs';
+    }
+
+    protected function getUploadRootDir()
+    {
+        return __DIR__.'/../../../../web/'.$this->getUploadDir();
+    }
+
+    public function getWebPath()
+    {
+        return null === $this->logo ? null : $this->getUploadDir().'/'.$this->logo;
+    }
+
+    public function getAbsolutePath()
+    {
+        return null === $this->logo ? null : $this->getUploadRootDir().'/'.$this->logo;
+    }
+
+    /**
+     * @ORM\prePersist
+     */
+    public function preUpload()
+    {
+        if (null !== $this->file) {
+            // do whatever you want to generate a unique name
+            $this->logo = uniqid().'.'.$this->file->guessExtension();
+        }
+    }
+
+    /**
+     * @ORM\postPersist
+     */
+    public function upload()
+    {
+        if (null === $this->file) {
+            return;
+        }
+
+        // if there is an error when moving the file, an exception will
+        // be automatically thrown by move(). This will properly prevent
+        // the entity from being persisted to the database on error
+        $this->file->move($this->getUploadRootDir(), $this->logo);
+
+        unset($this->file);
+    }
+
+    /**
+     * @ORM\postRemove
+     */
+    public function removeUpload()
+    {
+        if ($file = $this->getAbsolutePath()) {
+            unlink($file);
+        }
     }
 }
 
