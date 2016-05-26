@@ -144,7 +144,7 @@ class Job
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="updated_at", type="datetime")
+     * @ORM\Column(name="updated_at", type="datetime", nullable=true)
      */
     private $updatedAt;
 
@@ -461,22 +461,50 @@ class Job
     }
 
     /**
-     * Set expiresAt
-     *
-     * @param \DateTime $expiresAt
-     * @return Job
+     * @param \DateTime $createdAt
      */
-    public function setExpiresAt($expiresAt)
-    {
-        if(is_null($expiresAt))
-        {
-            $now = $this->getCreatedAt()?$this->getCreatedAt()->format('U') : time();
-            $this->expiresAt = new \DateTime(date('Y-m-d H:i:s', $now + 86400 * 30));
-        }else{
-            $this->expiresAt = $expiresAt;
-        }
+    public function setCreatedAt ($createdAt) {
+        $this->createdAt = $createdAt;
+    }
 
-        return $this;
+    /**
+     * @ORM\prePersist
+     */
+    public function setCreatedAtValue()
+    {
+        if(!$this->getCreatedAt())
+        {
+            $this->createdAt = new \DateTime();
+        }
+    }
+
+    /**
+     * Get createdAt
+     *
+     * @return \DateTime
+     */
+    public function getCreatedAt()
+    {
+        return $this->createdAt;
+    }
+
+    /**
+     * @param \DateTime $expiresAt
+     */
+    public function setExpiresAt ($expiresAt) {
+        $this->expiresAt = $expiresAt;
+    }
+
+    /**
+     * @ORM\prePersist
+     */
+    public function setExpiresAtValue()
+    {
+        if(!$this->getExpiresAt())
+        {
+            $now = $this->getCreatedAt() ? $this->getCreatedAt()->format('U') : time();
+            $this->expiresAt = new \DateTime(date('Y-m-d H:i:s', $now + 86400 * 30));
+        }
     }
 
     /**
@@ -490,41 +518,22 @@ class Job
     }
 
     /**
-     * Set createdAt
-     *
-     * @param \DateTime $createdAt
-     * @ORM\PrePersist
-     * @return Job
-     */
-    public function setCreatedAt($createdAt)
-    {
-        $this->createdAt = new \DateTime();
-
-        return $this;
-    }
-
-    /**
-     * Get createdAt
-     *
-     * @return \DateTime 
-     */
-    public function getCreatedAt()
-    {
-        return $this->createdAt;
-    }
-
-    /**
-     * Set updatedAt
-     *
      * @param \DateTime $updatedAt
-     * @ORM\PrePersist
-     * @return Job
      */
-    public function setUpdatedAt($updatedAt)
-    {
-        $this->updatedAt = new \DateTime();
+    public
+    function setUpdatedAt (
+        $updatedAt
+    ) {
+        $this->updatedAt = $updatedAt;
+    }
 
-        return $this;
+
+    /**
+     * @ORM\preUpdate
+     */
+    public function setUpdatedAtValue()
+    {
+        $this->updated_at = new \DateTime();
     }
 
     /**
