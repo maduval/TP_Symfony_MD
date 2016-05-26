@@ -47,21 +47,13 @@ class JobController extends Controller
      */
     public function newAction(Request $request)
     {
-        $job = new Job();
-        $form = $this->createForm('MathildeDuvalBundle\Form\JobType', $job);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($job);
-            $em->flush();
-
-            return $this->redirectToRoute('md_job_show', array('id' => $job->getId()));
-        }
+        $entity = new Job();
+        $entity->setType('full-time');
+        $form   = $this->createForm(new JobType(), $entity);
 
         return $this->render('job/new.html.twig', array(
-            'job' => $job,
-            'form' => $form->createView(),
+            'entity' => $entity,
+            'form'   => $form->createView()
         ));
     }
 
@@ -118,71 +110,103 @@ class JobController extends Controller
     /**
      * Displays a form to edit an existing Job entity.
      *
-     * @Route("/{id}/edit", name="md_job_edit")
+     * @Route("/{token}/edit", name="md_job_edit")
      * @Method({"GET", "POST"})
      */
-    public function editAction(Request $request, Job $job)
+    public function editAction($token)
     {
-        $deleteForm = $this->createDeleteForm($job);
-        $editForm = $this->createForm('MathildeDuvalBundle\Form\JobType', $job);
-        $editForm->handleRequest($request);
+        $em = $this->getDoctrine()->getEntityManager();
 
-        if ($editForm->isSubmitted() && $editForm->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($job);
-            $em->flush();
+        $entity = $em->getRepository('MathildeDuvalBundle:Job')->findOneByToken($token);
 
-            return $this->redirectToRoute('md_job_edit', array('id' => $job->getId()));
+        if (!$entity) {
+            throw $this->createNotFoundException('Unable to find Job entity.');
         }
 
+        $editForm = $this->createForm(new JobType(), $entity);
+        $deleteForm = $this->createDeleteForm($token);
+
         return $this->render('job/edit.html.twig', array(
-            'entity' => $job,
-            'edit_form' => $editForm->createView(),
+            'entity'      => $entity,
+            'edit_form'   => $editForm->createView(),
             'delete_form' => $deleteForm->createView(),
         ));
     }
 
     /**
-     * @Route("/{id}/update", name="md_job_update")
+     * @Route("/{token}/update", name="md_job_update")
      * @Method({"GET", "POST"})
      */
-    public function updateAction(){
+    public function updateAction($token){
+        $em = $this->getDoctrine()->getEntityManager();
 
+        $entity = $em->getRepository('MathildeDuvalBundle:Job')->findOneByToken($token);
+
+        if (!$entity) {
+            throw $this->createNotFoundException('Unable to find Job entity.');
+        }
+
+        $editForm   = $this->createForm(new JobType(), $entity);
+        $deleteForm = $this->createDeleteForm($token);
+
+        $request = $this->getRequest();
+
+        $editForm->bindRequest($request);
+
+        if ($editForm->isValid()) {
+            $em->persist($entity);
+            $em->flush();
+
+            return $this->redirect($this->generateUrl('md_job_edit', array('token' => $token)));
+        }
+
+        return $this->render('job/edit.html.twig', array(
+            'entity'      => $entity,
+            'edit_form'   => $editForm->createView(),
+            'delete_form' => $deleteForm->createView(),
+        ));
     }
 
     /**
      * Deletes a Job entity.
      *
-     * @Route("/{id}", name="md_job_delete")
+     * @Route("/{token}/delete", name="md_job_delete")
      * @Method("DELETE")
      */
-    public function deleteAction(Request $request, Job $job)
+    public function deleteAction($token)
     {
-        $form = $this->createDeleteForm($job);
-        $form->handleRequest($request);
+        $form = $this->createDeleteForm($token);
+        $request = $this->getRequest();
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-            $em->remove($job);
+        $form->bindRequest($request);
+
+        if ($form->isValid()) {
+            $em = $this->getDoctrine()->getEntityManager();
+            $entity = $em->getRepository('MathildeDuvalBundle:Job')->findOneByToken($token);
+
+            if (!$entity) {
+                throw $this->createNotFoundException('Unable to find Job entity.');
+            }
+
+            $em->remove($entity);
             $em->flush();
         }
 
-        return $this->redirectToRoute('md_job_index');
+        return $this->redirect($this->generateUrl('md_job'));
     }
 
     /**
      * Creates a form to delete a Job entity.
      *
-     * @param Job $job The Job entity
+     * @param $token
      *
      * @return \Symfony\Component\Form\Form The form
      */
-    private function createDeleteForm(Job $job)
+    private function createDeleteForm($token)
     {
-        return $this->createFormBuilder()
-            ->setAction($this->generateUrl('md_job_delete', array('id' => $job->getId())))
-            ->setMethod('DELETE')
-            ->getForm()
-        ;
+        return $this->createFormBuilder(array('token' => $token))
+                    ->add('token', 'hidden')
+                    ->getForm()
+            ;
     }
 }

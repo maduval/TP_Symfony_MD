@@ -100,7 +100,6 @@ class Job
      * @var string
      *
      * @ORM\Column(name="token", type="string", length=255, unique=true)
-     * @Assert\NotBlank();
      */
     private $token;
 
@@ -630,6 +629,17 @@ class Job
     {
         if ($file = $this->getAbsolutePath()) {
             unlink($file);
+        }
+    }
+
+    /**
+     * @ORM\prePersist
+     */
+    public function setTokenValue()
+    {
+        if(!$this->getToken())
+        {
+            $this->token = sha1($this->getEmail().rand(11111, 99999));
         }
     }
 }
