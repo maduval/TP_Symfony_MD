@@ -4,7 +4,7 @@ namespace MathildeDuvalBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use MathildeDuvalBundle\Utils\Jobeet as Jobeet;
-
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Job
@@ -29,6 +29,7 @@ class Job
      *
      * @ORM\ManyToOne(targetEntity="Category", inversedBy="jobs")
      * @ORM\JoinColumn(name="category_id", referencedColumnName="id")
+     * @Assert\NotBlank();
      *
      */
     private $category;
@@ -37,6 +38,7 @@ class Job
      * @var string
      *
      * @ORM\Column(name="type", type="string", length=255, nullable=true)
+     * @Assert\NotBlank();
      */
     private $type;
 
@@ -44,6 +46,7 @@ class Job
      * @var string
      *
      * @ORM\Column(name="company", type="string", length=255)
+     * @Assert\NotBlank();
      */
     private $company;
 
@@ -65,6 +68,7 @@ class Job
      * @var string
      *
      * @ORM\Column(name="position", type="string", length=255)
+     * @Assert\NotBlank();
      */
     private $position;
 
@@ -72,6 +76,7 @@ class Job
      * @var string
      *
      * @ORM\Column(name="location", type="string", length=255)
+     * @Assert\NotBlank();
      */
     private $location;
 
@@ -79,6 +84,7 @@ class Job
      * @var string
      *
      * @ORM\Column(name="description", type="text")
+     * @Assert\NotBlank();
      */
     private $description;
 
@@ -86,6 +92,7 @@ class Job
      * @var string
      *
      * @ORM\Column(name="how_to_apply", type="text")
+     * @Assert\NotBlank();
      */
     private $howToApply;
 
@@ -93,6 +100,7 @@ class Job
      * @var string
      *
      * @ORM\Column(name="token", type="string", length=255, unique=true)
+     * @Assert\NotBlank();
      */
     private $token;
 
@@ -114,6 +122,8 @@ class Job
      * @var string
      *
      * @ORM\Column(name="email", type="string", length=255)
+     * @Assert\NotBlank()
+     * @Assert\Email()
      */
     private $email;
 
@@ -537,4 +547,19 @@ class Job
     {
         return Jobeet::slugify($this->getLocation());
     }
+
+    public static function getTypes()
+    {
+        return array('full-time' => 'Full time', 'part-time' => 'Part time', 'freelance' => 'Freelance');
+    }
+
+    /**
+     * @Assert\CallBack();
+     */
+    public static function getTypeValues()
+    {
+        return array_keys(self::getTypes());
+    }
 }
+
+

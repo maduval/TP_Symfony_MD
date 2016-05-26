@@ -65,6 +65,37 @@ class JobController extends Controller
         ));
     }
 
+
+    /**
+     * @Route("/create", name="md_job_create")
+     * @Method({"GET", "POST"})
+     */
+    public function createAction(){
+        $entity  = new Job();
+        $request = $this->getRequest();
+        $form    = $this->createForm(new JobType(), $entity);
+        $form->bindRequest($request);
+
+        if ($form->isValid()) {
+            $em = $this->getDoctrine()->getEntityManager();
+
+            $em->persist($entity);
+            $em->flush();
+
+            return $this->redirect($this->generateUrl('md_job_show', array(
+                'company' => $entity->getCompanySlug(),
+                'location' => $entity->getLocationSlug(),
+                'id' => $entity->getId(),
+                'position' => $entity->getPositionSlug()
+            )));
+        }
+
+        return $this->render('job/new.html.twig', array(
+            'entity' => $entity,
+            'form'   => $form->createView()
+        ));
+    }
+
     /**
      * Finds and displays a Job entity.
      *
@@ -109,6 +140,14 @@ class JobController extends Controller
             'edit_form' => $editForm->createView(),
             'delete_form' => $deleteForm->createView(),
         ));
+    }
+
+    /**
+     * @Route("/{id}/update", name="md_job_update")
+     * @Method({"GET", "POST"})
+     */
+    public function updateAction(){
+
     }
 
     /**

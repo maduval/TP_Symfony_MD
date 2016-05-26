@@ -5,6 +5,8 @@ namespace MathildeDuvalBundle\Form;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use MathildeDuvalBundle\Entity\Job;
+
 
 class JobType extends AbstractType
 {
@@ -15,23 +17,24 @@ class JobType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('type')
+            ->add('type', 'choice', array('choices' => Job::getTypes(), 'expanded' => true))
             ->add('company')
-            ->add('logo')
+            ->add('logo', null, array('label' => 'Company logo'))
             ->add('url')
             ->add('position')
             ->add('location')
             ->add('description')
-            ->add('howToApply')
+            ->add('how_to_apply', null, array('label' => 'How to apply?'))
             ->add('token')
-            ->add('isPublic')
-            ->add('isActivated')
+            ->add('isPublic', null, array('label' => 'Public?'))
             ->add('email')
-            ->add('expiresAt', 'datetime')
-            ->add('createdAt', 'datetime')
-            ->add('updatedAt', 'datetime')
             ->add('category')
         ;
+    }
+
+    public function getName()
+    {
+        return 'mathildebundle_jobtype';
     }
     
     /**
