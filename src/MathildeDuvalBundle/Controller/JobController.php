@@ -148,13 +148,60 @@ class JobController extends Controller
             throw $this->createNotFoundException('Unable to find Job entity.');
         }
 
+
         $deleteForm = $this->createDeleteForm($entity->getId());
+        $publishForm = $this->createPublishForm($entity->getToken());
 
         return $this->render('job/show.html.twig', array(
             'job'      => $entity,
             'delete_form' => $deleteForm->createView(),
+            'publish_form' => $publishForm->createView(),
         ));
     }
+
+    /**
+     * @Method("POST")
+     * @Route("/{token}/publish", name="md_job_publish")
+     */
+    public function publishAction($token){
+
+        $form = $this->createPublishForm($token);
+        $request = $this->getRequest();
+
+        $form->bind($request);
+
+        if ($form->isValid()) {
+            $em     = $this->getDoctrine ()->getEntityManager ();
+            $entity = $em->getRepository ( 'MathildeDuvalBundle:Job' )->findOneByToken ( $token );
+
+            if ( ! $entity ) {
+                throw $this->createNotFoundException ( 'Unable to find Job entity.' );
+            }
+
+            $entity->publish ();
+            $em->persist ( $entity );
+            $em->flush ();
+
+            $this->get('session')->getFlashBag()->set('notice' , 'Your job is now online for 30 days.');
+        }
+
+        return $this->redirect($this->generateUrl('md_job_preview', array(
+            'company' => $entity->getCompanySlug(),
+            'location' => $entity->getLocationSlug(),
+            'token' => $entity->getToken(),
+            'position' => $entity->getPositionSlug()
+        )));
+    }
+
+
+    private function createPublishForm($token)
+    {
+        return $this->createFormBuilder(array('token' => $token))
+                    ->add('token', 'hidden')
+                    ->getForm()
+            ;
+    }
+
 
     /**
      * @Route("/{token}/update", name="md_job_update")
@@ -180,29 +227,34 @@ class JobController extends Controller
             $em->persist($entity);
             $em->flush();
 
-            return $this->redirect($this->generateUrl('md_job_edit', array('token' => $token)));
+            return $this->redirect($this->generateUrl('md_job_preview', array(
+                'company' => $entity->getCompanySlug(),
+                'location' => $entity->getLocationSlug(),
+                'token' => $entity->getToken(),
+                'position' => $entity->getPositionSlug()
+            )));
         }
 
-        return $this->redirect($this->generateUrl('md_job_preview', array(
-            'company' => $entity->getCompanySlug(),
-            'location' => $entity->getLocationSlug(),
-            'token' => $entity->getToken(),
-            'position' => $entity->getPositionSlug()
-        )));
+        return $this->render('job/edit.html.twig', array(
+            'entity'      => $entity,
+            'edit_form'   => $editForm->createView(),
+            'delete_form' => $deleteForm->createView(),
+        ));
+
     }
 
     /**
      * Deletes a Job entity.
      *
      * @Route("/{token}/delete", name="md_job_delete")
-     * @Method("DELETE")
+     * @Method({"DELETE", "POST"})
      */
     public function deleteAction($token)
     {
         $form = $this->createDeleteForm($token);
         $request = $this->getRequest();
 
-        $form->bindRequest($request);
+        $form->bind($request);
 
         if ($form->isValid()) {
             $em = $this->getDoctrine()->getEntityManager();
@@ -216,7 +268,7 @@ class JobController extends Controller
             $em->flush();
         }
 
-        return $this->redirect($this->generateUrl('md_job'));
+        return $this->redirect($this->generateUrl('md_job_index'));
     }
 
     /**
