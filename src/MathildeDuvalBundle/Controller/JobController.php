@@ -66,7 +66,7 @@ class JobController extends Controller
         $entity  = new Job();
         $request = $this->getRequest();
         $form    = $this->createForm(new JobType(), $entity);
-        $form->bindRequest($request);
+        $form->bind($request);
 
         if ($form->isValid()) {
             $em = $this->getDoctrine()->getEntityManager();
@@ -74,10 +74,10 @@ class JobController extends Controller
             $em->persist($entity);
             $em->flush();
 
-            return $this->redirect($this->generateUrl('md_job_show', array(
+            return $this->redirect($this->generateUrl('md_job_preview', array(
                 'company' => $entity->getCompanySlug(),
                 'location' => $entity->getLocationSlug(),
-                'id' => $entity->getId(),
+                'token' => $entity->getToken(),
                 'position' => $entity->getPositionSlug()
             )));
         }
@@ -134,6 +134,29 @@ class JobController extends Controller
     }
 
     /**
+     * @Route("/{company}/{location}/{token}/{position}", requirements={"token" = "\w+"}, name="md_job_preview")
+     * @Method({"GET", "POST"})
+     *
+     */
+    public function previewAction($token){
+
+        $em = $this->getDoctrine()->getEntityManager();
+
+        $entity = $em->getRepository('MathildeDuvalBundle:Job')->findOneByToken($token);
+
+        if (!$entity) {
+            throw $this->createNotFoundException('Unable to find Job entity.');
+        }
+
+        $deleteForm = $this->createDeleteForm($entity->getId());
+
+        return $this->render('job/show.html.twig', array(
+            'job'      => $entity,
+            'delete_form' => $deleteForm->createView(),
+        ));
+    }
+
+    /**
      * @Route("/{token}/update", name="md_job_update")
      * @Method({"GET", "POST"})
      */
@@ -151,7 +174,7 @@ class JobController extends Controller
 
         $request = $this->getRequest();
 
-        $editForm->bindRequest($request);
+        $editForm->bind($request);
 
         if ($editForm->isValid()) {
             $em->persist($entity);
@@ -160,11 +183,12 @@ class JobController extends Controller
             return $this->redirect($this->generateUrl('md_job_edit', array('token' => $token)));
         }
 
-        return $this->render('job/edit.html.twig', array(
-            'entity'      => $entity,
-            'edit_form'   => $editForm->createView(),
-            'delete_form' => $deleteForm->createView(),
-        ));
+        return $this->redirect($this->generateUrl('md_job_preview', array(
+            'company' => $entity->getCompanySlug(),
+            'location' => $entity->getLocationSlug(),
+            'token' => $entity->getToken(),
+            'position' => $entity->getPositionSlug()
+        )));
     }
 
     /**
