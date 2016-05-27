@@ -33,7 +33,8 @@ class JobType extends AbstractType
 
     public function getName()
     {
-        return 'mathildebundle_jobtype';
+//        return 'mathildebundle_jobtype';
+        return 'job';
     }
     
     /**

@@ -123,6 +123,10 @@ class JobController extends Controller
             throw $this->createNotFoundException('Unable to find Job entity.');
         }
 
+        if ($entity->getIsActivated()) {
+            throw $this->createNotFoundException('Job is activated and cannot be edited.');
+        }
+
         $editForm = $this->createForm(new JobType(), $entity);
         $deleteForm = $this->createDeleteForm($token);
 
@@ -148,14 +152,15 @@ class JobController extends Controller
             throw $this->createNotFoundException('Unable to find Job entity.');
         }
 
-
         $deleteForm = $this->createDeleteForm($entity->getId());
         $publishForm = $this->createPublishForm($entity->getToken());
+        $extendForm = $this->createExtendForm($entity->getToken());
 
         return $this->render('job/show.html.twig', array(
             'job'      => $entity,
             'delete_form' => $deleteForm->createView(),
             'publish_form' => $publishForm->createView(),
+            'extend_form' => $extendForm->createView(),
         ));
     }
 
@@ -279,6 +284,51 @@ class JobController extends Controller
      * @return \Symfony\Component\Form\Form The form
      */
     private function createDeleteForm($token)
+    {
+        return $this->createFormBuilder(array('token' => $token))
+                    ->add('token', 'hidden')
+                    ->getForm()
+            ;
+    }
+
+    /**
+     * @Route("/{token}/extend", name="md_job_extend")
+     * @Method({"GET", "POST"})
+     */
+    public function extendAction($token){
+
+        $form = $this->createExtendForm($token);
+        $request = $this->getRequest();
+
+        $form->bind($request);
+
+        if ($form->isValid()) {
+            $em = $this->getDoctrine()->getEntityManager();
+            $entity = $em->getRepository('MathildeDuvalBundle:Job')->findOneByToken($token);
+
+            if (!$entity) {
+                throw $this->createNotFoundException('Unable to find Job entity.');
+            }
+
+            if (!$entity->extend()) {
+                throw $this->createNotFoundException('Unable to find extend the Job.');
+            }
+
+            $em->persist($entity);
+            $em->flush();
+
+            $this->get('session')->setFlash('notice', sprintf('Your job validity has been extended until %s.', $entity->getExpiresAt()->format('m/d/Y')));
+        }
+
+        return $this->redirect($this->generateUrl('md_job_preview', array(
+            'company' => $entity->getCompanySlug(),
+            'location' => $entity->getLocationSlug(),
+            'token' => $entity->getToken(),
+            'position' => $entity->getPositionSlug()
+        )));
+    }
+
+    private function createExtendForm($token)
     {
         return $this->createFormBuilder(array('token' => $token))
                     ->add('token', 'hidden')
