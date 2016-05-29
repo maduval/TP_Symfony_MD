@@ -43,10 +43,10 @@
             <small>posted on {{ job.createdat|date('m/d/Y') }}</small>
         </div>
 
-        <div style="padding: 20px 0">
-            <a href="{{ path('md_job_edit', { 'token': job.token }) }}">
-                Edit
-            </a>
-        </div>
+        {#<div style="padding: 20px 0">#}
+            {#<a href="{{ path('md_job_edit', { 'token': job.token }) }}">#}
+                {#Edit#}
+            {#</a>#}
+        {#</div>#}
     </div>
 {% endblock %}
