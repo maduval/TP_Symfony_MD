@@ -4,10 +4,14 @@ TP_Symfony_MD
 A Symfony project created on May 19, 2016, 3:44 pm.
 
 1. Cloner ce repository:
-    Plus d'informations: https://help.github.com/articles/cloning-a-repository/
+    
+
+Plus d'informations: https://help.github.com/articles/cloning-a-repository/
 
 2. Dans le terminal se positionner dans le dossier du projet:
-    Commande: cd TP_Symfony_MD/
+    
+
+Commande: cd TP_Symfony_MD/
 
 3. Via le terminal, installer des dependances:
     Commande: php composer.phar update
