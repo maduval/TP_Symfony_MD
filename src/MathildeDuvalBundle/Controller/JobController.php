@@ -36,10 +36,10 @@ class JobController extends Controller
 
         $format = $this->getRequest()->getRequestFormat();
 
-        return $this->render('MathildeDuvalBundle:Job:index.'.$format.'.twig', array(
+        return $this->render('job/index.'.$format.'.twig', array(
             'categories' => $categories,
             'lastUpdated' => $em->getRepository('MathildeDuvalBundle:Job')->getLatestPost()->getCreatedAt()->format(DATE_ATOM),
-            'feedId' => sha1($this->get('router')->generate('ens_job', array('_format'=> 'atom'), true)),
+            'feedId' => sha1($this->get('router')->generate('md_job_index', array('_format'=> 'atom'), true)),
         ));
 
     }
