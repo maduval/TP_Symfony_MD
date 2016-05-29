@@ -45,4 +45,4 @@ security:
             entity: { class: MathildeDuvalBundle\Entity\User, property: username }
 
     encoders:
-        Ens\AlipsBundle\Entity\User: sha512
+        MathildeDuvalBundle\Entity\User: sha512

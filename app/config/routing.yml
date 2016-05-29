@@ -19,3 +19,6 @@ _sonata_admin:
 
 login_check:
     pattern:   /login_check
+
+logout:
+    pattern:   /logout

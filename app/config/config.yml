@@ -72,6 +72,7 @@ swiftmailer:
 sonata_admin:
     title: Jobeet Admin
 
+
 sonata_block:
     default_contexts: [cms]
     blocks:

@@ -1,5 +1,5 @@
 <?php
-namespace Ens\JobeetBundle\DataFixtures\ORM;
+namespace MathildeDuvalBundle\DataFixtures\ORM;
 
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\DataFixtures\AbstractFixture;
